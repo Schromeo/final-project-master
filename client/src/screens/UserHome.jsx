@@ -7,7 +7,7 @@ export default function UserHome() {
     return (
         <div>
             <h1 className='h1s'>Welcome, {user.username}</h1>
-            <div className="content-wrapper">
+            <div className="content-wrapper text1">
                 <div class="content">
                     <div id="gridThumbs" class="portfolio-grid-overlay grid-wrapper collection-content-wrapper" data-controller="GridImages" data-animation-role="section" data-controllers-bound="GridImages">
                         {fashionarr.slice(0, 6).map((item, index) => {

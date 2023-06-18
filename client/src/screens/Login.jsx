@@ -2,7 +2,8 @@ import { useState, useContext } from "react"
 import { AuthContext } from "../App"
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import '../assets/css/signup.css'
+
+import '../assets/css/login.css'
 
 export default function Login() {
     const { setUser } = useContext(AuthContext);
@@ -12,15 +13,24 @@ export default function Login() {
 
     return (
         <div>
-            <h1>Log In</h1>
-            <div>
-                <input type="text" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-                <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-            </div>
-            <div>
-                <button onClick={() => navigate("/signup")}>Sign Up</button>
+            
+            <h1 className="h1s">Log In</h1>
+            <div className="globaldiv row text1" >
+                
+                <div className="globaldiv col-3">
+                <div className='labeldiv'>              
+                        <label>E-mail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <input type="text" placeholder="example@email.com" onChange={(e) => setEmail(e.target.value)} />
+                    </div>
+                    <div className='labeldiv'>              
+                        <label>Password&nbsp;&nbsp;</label>
+                        <input className="" type="password" placeholder="********" onChange={(e) => setPassword(e.target.value)} />
+                    </div>
+                
+                <div className="pl-xl-5">
+                <button className="btn btn-outline-success my-2 my-sm-0" onClick={() => navigate("/signup")}>Sign Up</button>
                 {/* make call to index.mjs and get user with matching details using "?" query */}
-                <button onClick={() => {
+                <button className="btn btn-outline-success my-2 my-sm-0 ml-xl-5" onClick={() => {
                     // pass {email, password} to index.mjs on local
                     fetch("http://localhost:3001/user?email=" + email + "&password=" + password, {
                         method: "GET",
@@ -44,6 +54,16 @@ export default function Login() {
                     Log In
                 </button>
             </div>
+                </div>
+                <div className="col-8">
+                <img id="loginpic" className="carddiv" src={require(`../images/lion_head.png`) }
+                        alt="log in pic"
+                    />
+                </div>
+
+                
+            </div>
+            
         </div>
     )
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Select from 'react-select'
+import "../assets/css/profile.css"
 
 export default function CreateItem() {
     const [name, setName] = useState('')
@@ -17,10 +18,10 @@ export default function CreateItem() {
 
     return (
         <div>
-            <h1>Create Item</h1>
+            <h1 className='h1s'>Create Item</h1>
             <div className="globaldiv">
                 <div className="labeldiv">
-                    <label>Name</label>   
+                    <label><h4 className='text1'>Product Name:</h4></label>   
                     <input type="text" value={name} onChange={e => setName(e.target.value)} />
                 </div>
                 <div className="labeldiv">

@@ -5,7 +5,7 @@ import '../assets/css/guesthome.css'
 export default function GuestHome() {
     return (
         <div className="content-wrapper">
-            <div class="content">
+            <div class="content text1">
                 <div id="gridThumbs" class="portfolio-grid-overlay grid-wrapper collection-content-wrapper" data-controller="GridImages" data-animation-role="section" data-controllers-bound="GridImages">
                     {fashionarr.slice(0, 6).map((item, index) => {
                         return (

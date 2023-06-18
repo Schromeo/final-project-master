@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserTie, faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import fashionarr from "../../items";
 import { toast } from "react-toastify";
+import '../../assets/css/profile.css'
 
 export default function Navbar() {
     const { user, setUser } = useContext(AuthContext);
@@ -12,15 +13,15 @@ export default function Navbar() {
     console.log("fashionarr", fashionarr)
 
     return (
-        <nav className="flex flex-row justify-evenly navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" style={{fontSize: '2rem'}} href="#">Navbar</a>
+        <nav className="flex flex-row justify-evenly navbar navbar-expand-lg navbar-light bg-light text1">
+            <a class="navbar-brand" style={{fontFamily:'gothicFont', fontSize:"2.5rem"}} href="#">Schromeo</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
+                    <input class="form-control mr-sm-2" type="search" placeholder="What you want" aria-label="Search" />
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </form>
                 <ul className="navbar-nav mr-3 ml-auto">

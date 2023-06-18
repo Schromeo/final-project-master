@@ -17,6 +17,7 @@
     position: relative;
     display: inline-block;
     cursor: pointer;
+    
 }
 
 .carddiv img {
@@ -33,11 +34,12 @@
     margin: 0;
     padding: 0;
     text-align: center;
-    color: black;
+    color: rgb(105, 82, 23);
     font-weight: 600;
-    font-size: 150%;
+    font-size: 1000%;
     transition: all 0.3s ease;
     opacity: 0;
+    font-family:'gothicFont'
 }
 .carddiv::before {
     content: "";
@@ -60,4 +62,10 @@
     margin-block: 1.5rem;
     font-weight: 400;
     font-style:oblique;
+    font-family: 'gothicFont';
+    color: rgb(163, 125, 29);
+}
+@font-face {
+    font-family: 'gothicFont';
+    src: url(../font/Angel\ wish.ttf) format('truetype');
 }
