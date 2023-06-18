@@ -21,8 +21,8 @@ export default function Navbar() {
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="What you want" aria-label="Search" />
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    <input style={{borderRadius: '17px'}} class="form-control mr-sm-2" type="search" placeholder="What you want" aria-label="Search" />
+                    <button style={{borderRadius: '17px'}} class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </form>
                 <ul className="navbar-nav mr-3 ml-auto">
                     <li class="nav-item active">

@@ -25,7 +25,7 @@ export default function Profile() {
     return (
         <div>
             <h1 className='h1s'>Profile</h1>
-            <div id="profileparentdiv">
+            <div id="profileparentdiv"  className='text1'>
                 <img id="profilepic" src={require(`../images/${user.role.charAt(0).toLowerCase() + user.role.slice(1)}.jpg`)}
                     alt="profile pic"
                 />
@@ -74,7 +74,7 @@ export default function Profile() {
                             }}
                         />
                     }
-                    <button className="btn btn-outline-success my-2 my-sm-0" onClick={() => 
+                    <button className="btn btn-outline-success my-sm-0 ml-5" onClick={() => 
                         fetch('http://localhost:3001/updateprofile', {
                             method: "POST",
                             headers: {

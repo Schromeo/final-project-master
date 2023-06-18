@@ -5,20 +5,34 @@ import path from 'path'
 import { fileURLToPath } from 'url';
 import fetch from 'node-fetch';
 import * as fs from 'fs';
+import multer from 'multer';
+import bodyParser from 'body-parser';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // app.use(express.static(path.join(__dirname, 'build')))
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 });
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null , file.originalname)
+    }
+})
+
+const upload = multer({ dest: 'uploads/'})
+app.use(upload.array('images'));
 
 // if mongoose is connected, set
 const User = mongoose.model('User');
@@ -91,6 +105,36 @@ app.post('/updateprofile', async (req, res) => {
             console.error(err);
             res.status(500).json({ error: 'User update failed' });
         });
+});
+// 
+app.post("/createitem", upload.array('images'), async (req, res) => {
+    const formData = req.body;
+    console.log("formData is: ", formData)
+    // frontend can do formData.get('images') to get the array of images
+    // const data = JSON.parse(formData.data);
+    // console.log("parsed data is: ", data)
+    // frontend passes JSON.stringify(name, price, description, newused, formData, username: user.username) as body
+    // const { name, price, description, newused, username, formData } = req.body;
+    // const data = req.body.data;
+    // console.log("data is: ", data)
+    // const { name, price, description, newused, username } = data;
+
+    // formData holds new FormData() with formData.append('images', finalfiles[i]);
+    // console.log("name is: ", name)
+    // console.log("price is: ", price)
+    // console.log("description is: ", description)
+    // console.log("newused is: ", newused)
+    // console.log("username is: ", username)
+    // console.log("formData is: ", formData)
+
+    
+    // find user with username
+    // User.findOne({ username: username }).then(async (user) => {
+    //     if (user) {
+            // save item here
+
+    //     }
+    // })
 });
 
 app.listen(process.env.PORT || 3001);
