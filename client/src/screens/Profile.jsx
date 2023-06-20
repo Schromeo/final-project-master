@@ -74,7 +74,7 @@ export default function Profile() {
                             }}
                         />
                     }
-                    <button className="btn btn-outline-success my-sm-0 ml-5" onClick={() => 
+                    <button className="btn btn-outline-success my-sm-0 ml-5 " onClick={() => 
                         fetch('http://localhost:3001/updateprofile', {
                             method: "POST",
                             headers: {
