@@ -1,7 +1,9 @@
 import { useState, useContext } from "react"
 import { AuthContext } from "../App"
 import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify";
 import '../assets/css/signup.css'
+
 
 export default function Signup() {
     const [role, setRole] = useState("")
@@ -17,8 +19,8 @@ export default function Signup() {
                 <div>
                     <h1 id="signuph1">Sign Up</h1>
                     <div id="gridthumbs-signup" className="portfolio-grid-overlay grid-wrapper collection-content-wrapper">
-                        {["Seller", "Buyer"].map((role) => (
-                            <div className="carddiv" onClick={() => setRole(role)}>
+                        {["Seller", "Buyer"].map((role, index) => (
+                            <div className="carddiv" onClick={() => setRole(role)} key={index}>
                                 <div className="carddiv-content">
                                     <img 
                                         alt="cardimg"
@@ -34,33 +36,58 @@ export default function Signup() {
             ) : (
                 // this will be signup form
                 <div>
-                    <h1>Welcome New {role}</h1>
-                    <div>
-                        <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
-                        <input type="text" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-                        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                    <h1 className="h1s">Welcome New {role}</h1>
+                    <div id="logindiv" className="globaldiv text1">
+                        <div id="loginform" className="globaldiv">
+                            <div className='labeldiv'>
+                                <label>Username</label>
+                                <input type="text" onChange={(e) => setUsername(e.target.value)} />
+                            </div>
+                            <div className='labeldiv'>
+                                <label>Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <input type="text" placeholder="example@email.com" onChange={(e) => setEmail(e.target.value)} />
+                            </div>
+                            <div className='labeldiv'>
+                                <label>Password</label>
+                                <input type="password" placeholder="********" onChange={(e) => setPassword(e.target.value)} />
+                            </div>
+                            {/* when we click signup make a call to the express app with /user endpoint */}
+                            <button className="btn btn-outline-success my-2 my-sm-0 align-self-center" onClick={() => {
+                                console.log(`username: ${username}, email: ${email}, password: ${password}, role: ${role}`)
+                                // fetch to localhost:3001/user
+                                fetch("http://localhost:3001/user", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({username, email, password, role})
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.error) {
+                                        toast.error(data.error, {
+                                            position: toast.POSITION.TOP_CENTER,
+                                            colored: true,
+                                        })
+                                    } else {
+                                        // setuser in authcontext
+                                        setUser(data)
+                                        toast.success("Signed up successfully", {
+                                            position: toast.POSITION.TOP_CENTER,
+                                            colored: true,
+                                        })
+                                        navigate("/")
+                                    }
+                                })
+                                .catch(err => toast.error("Error signing up"))
+                            }}>
+                                Sign Up
+                            </button>
+                        </div>
+                        <img id="loginpic" className="carddiv" src={require(`../images/lion_head.png`) }
+                            alt="log in pic" style={{width: '48%', borderRadius: '12px'}}
+                        />
                     </div>
-                    {/* when we click signup make a call to the express app with /user endpoint */}
-                    <button onClick={() => {
-                        // fetch to localhost:3001/user
-                        fetch("http://localhost:3001/user", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({username, email, password, role})
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data) {
-                                // setuser in authcontext
-                                setUser(data)
-                                navigate("/")
-                            }
-                        })
-                    }}>
-                        Sign Up
-                    </button>
                 </div>
             )}
         </div>

@@ -1,19 +1,23 @@
 import { useContext, useState, useEffect } from 'react'
 import Select from 'react-select'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { AuthContext } from '../App'
-import '../assets/css/createitem.css'
 
-export default function CreateItem() {
-    const [name, setName] = useState('')
-    const [price, setPrice] = useState(0)
-    const [description, setDescription] = useState('')
-    const [newused, setNewused] = useState('new')
-    const [image, setImage] = useState('')
-    const [finalfiles, setFinalfiles] = useState([])
+export default function EditItem() {
+    const location = useLocation()
     const navigate = useNavigate()
+    // get item from navigate(`/details/${item.id}`, { state: { item: item } })
+    const { item } = location.state
+    console.log("item: ", item)
+
     const { user } = useContext(AuthContext)
+    const [name, setName] = useState(item.name)
+    const [price, setPrice] = useState(item.price)
+    const [description, setDescription] = useState(item.description)
+    const [newused, setNewused] = useState({value: item.newused, label: item.newused})
+    // const [image, setImage] = useState(item.images)
+    const [finalfiles, setFinalfiles] = useState([])
 
     const options = [
         {value: 'Brand New', label: 'Brand New'},
@@ -22,9 +26,9 @@ export default function CreateItem() {
         {value: 'Refurbished', label: 'Refurbished'}
     ]
 
-    useEffect(() => {
-        console.log("image is: ", image)
-    }, [image])
+    // useEffect(() => {
+    //     console.log("image is: ", image)
+    // }, [image])
 
     useEffect(() => {
         console.log("finalfiles: ", finalfiles)
@@ -50,67 +54,54 @@ export default function CreateItem() {
 
     return (
         <div>
-            <h1 className='h1s'>Create Item</h1>
+            <h1 className='h1s'>Edit Item</h1>
             <iframe name="dummyframe" id="dummyframe" style={{display: "none"}}></iframe>
             <form className="globaldiv text1" id='createitemdiv' encType="multipart/form-data"
                 onSubmit={async (e) => {
                     e.preventDefault();
                     console.log("e.target: ", e.target);
-                    // if any of the fiels are empty, toast.error("Please fill out all fields"), if not, proceed
-                    if (e.target.name.value === '' || e.target.price.value === '' || e.target.description.value === '' ||
-                        finalfiles.length === 0 || e.target.newused.value === ''
-                    ) {
-                        console.log(`name: ${e.target.name.value}, price: ${e.target.price.value}, description: ${e.target.description.value},
-                            finalfiles: ${finalfiles.length}, newused: ${e.target.newused.value}`)
-                        toast.error("Please fill out all fields!", {
-                            position: "top-center",
-                            colored: true,
-                        });
-                        return;
-                    } else {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open("POST", "http://localhost:3001/createitem");
-                        xhr.onload = function (event) {
-                        if (xhr.status === 200) {
-                            let response = JSON.parse(xhr.responseText);
-                            if (response.success) {
-                                toast.success("Item listed successfully!", {
-                                    position: "top-center",
-                                    colored: true,
-                                });
-                                navigate("/listeditems");
-                            } else {
-                                toast.error("Error listing item!", {
-                                    position: "top-center",
-                                    colored: true,
-                                });
-                            }
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "http://localhost:3001/edititem");
+                    xhr.onload = function (event) {
+                      if (xhr.status === 200) {
+                        let response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            toast.success("Item listed successfully!", {
+                                position: "top-center",
+                                colored: true,
+                            });
+                            navigate("/listeditems");
                         } else {
-                            toast.error(`HTTP request error: " + ${xhr.status}`, {
+                            toast.error("Error listing item!", {
                                 position: "top-center",
                                 colored: true,
                             });
                         }
-                        };
-                        var formData = new FormData(e.target);
-                        // get username from formdata
-                        console.log(formData.get("username"));
-                        console.log("formData: ", formData);
-                        xhr.send(formData);
-                    }
+                      } else {
+                        toast.error(`HTTP request error: " + ${xhr.status}`, {
+                            position: "top-center",
+                            colored: true,
+                        });
+                      }
+                    };
+                    var formData = new FormData(e.target);
+                    // get username from formdata
+                    console.log(formData.get("username"));
+                    console.log("formData: ", formData);
+                    xhr.send(formData);
                   }}
             >
                 <div className="labeldiv">
                     <label><h4 className='text1'>Product Name:</h4></label>   
-                    <input type="text" name='name' />
+                    <input type="text" name='name' value={name} onChange={e => setName(e.target.value)} />
                 </div>
                 <div className="labeldiv">
                     <label>Price</label>
-                    <input type="number" name='price' step='0.01' />
+                    <input type="number" name='price' value={price} onChange={e => setPrice(e.target.value)} />
                 </div>
                 <div className="labeldiv" id='newuseddiv'>
                     <label>New/Used</label>
-                    <Select options={options} onChange={(val) => setNewused(val)} />
+                    <Select options={options} onChange={(val) => setNewused(val)} value={newused} />
                     {/* invisible input */}
                     <input type="text" name='newused' value={newused.value} style={{display: 'none'}} />
                 </div>
@@ -123,7 +114,7 @@ export default function CreateItem() {
                 <div className="labeldiv" id='descriptiondiv'>
                     <label>Description</label>
                     <textarea name='description' style={{border: '2px solid gray', borderRadius: '8px'}}
-                        // value={description} onChange={e => setDescription(e.target.value)}
+                        value={description} onChange={e => setDescription(e.target.value)}
                     />
                 </div>
                 {/* invisible input for passing username */}

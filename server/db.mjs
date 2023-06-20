@@ -16,27 +16,25 @@ const UserSchema = new mongoose.Schema({
     // role will either be seller or buyer
     role: {type: String, required: true},
     // link to a shopping cart
-    shopping_cart: {type: mongoose.Schema.Types.ObjectId, ref: 'ShoppingCart'},
+    shopping_cart: [{type: mongoose.Schema.Types.ObjectId, ref: 'Item'}],
     listed_items: [{type: mongoose.Schema.Types.ObjectId, ref: 'Item'}],
     interests: [{type: String, required: false}],
 });
-
-const ShoppingCartSchema = new mongoose.Schema({
-
-})
 
 const ItemSchema = new mongoose.Schema({
     name: {type: String, required: true},
     price: {type: Number, required: true},
     description: {type: String, required: true},
-    image: {
+    newused: {type: String, required: true},
+    link: String,
+    images: [{
         data: Buffer,
-        contentType: String
-    },
+        contentType: String,
+        // also need the name of the image so frontend can display it
+        name: String
+    }],
     // reference to the seller
-    seller: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    // reference to shopping cart
-    shopping_cart: {type: mongoose.Schema.Types.ObjectId, ref: 'ShoppingCart'}
+    seller: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 });
 
 // link the slug plugin to the ItemSchema
@@ -44,7 +42,6 @@ ItemSchema.plugin(mongooseSlugPlugin, { tmpl: '<%=name%>' });
 
 mongoose.model('User', UserSchema);
 mongoose.model('Item', ItemSchema);
-mongoose.model('ShoppingCart', ShoppingCartSchema);
 
-let dbconf = 'mongodb://localhost/commerce';
+const dbconf = 'mongodb://localhost/commerce';
 mongoose.connect(dbconf);

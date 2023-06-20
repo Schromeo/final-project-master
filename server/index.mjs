@@ -1,16 +1,19 @@
 import './db.mjs';
 import mongoose from 'mongoose';
-import express from 'express'
+import express from 'express';
+import multer from 'multer';
 import path from 'path'
 import { fileURLToPath } from 'url';
 import fetch from 'node-fetch';
 import * as fs from 'fs';
-import multer from 'multer';
 import bodyParser from 'body-parser';
+import {v4 as uuidv4} from 'uuid';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+let itembody = {};
 
 // app.use(express.static(path.join(__dirname, 'build')))
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -22,26 +25,35 @@ app.use((req, res, next) => {
     next();
 });
 
+// make uploads folder accessible as static so the frontend can access it
+app.use('/uploads', express.static('uploads'));
+
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
+        console.log("body in destination is: ", req.body)
+        itembody = req.body;
         cb(null, 'uploads/')
     },
     filename: function (req, file, cb) {
-        cb(null , file.originalname)
+        console.log("body in filename is: ", req.body)
+        const uniqueFilename = uuidv4(); // Generate a unique identifier
+        console.log("uf: ", uniqueFilename)
+        const fileExtension = file.originalname.split('.').pop(); // Get file extension (jpg/png)
+        const finalFilename = uniqueFilename + '.' + fileExtension; // Puts them together
+        
+        // add file name to itembody so it can be accessed in the post request
+        itembody.filename = finalFilename;
+        cb(null , finalFilename)
     }
 })
 
-const upload = multer({ dest: 'uploads/'})
+const upload = multer({ storage: storage });
+
 app.use(upload.array('images'));
 
 // if mongoose is connected, set
 const User = mongoose.model('User');
-const ShoppingCart = mongoose.model('ShoppingCart');
 const Item = mongoose.model('Item');
-
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
 
 app.get('/user', (req, res) => {
     const { email, password } = req.query;
@@ -54,7 +66,7 @@ app.get('/user', (req, res) => {
         // if user is found, return user
         if (user) {
             console.log("found user is: ", user)
-            res.json(user);
+            res.json(user)
         } else {
             // if user is not found, return null
             res.json(null);
@@ -64,7 +76,7 @@ app.get('/user', (req, res) => {
 
 app.post('/user', async (req, res) => {
     console.log("user is: ", req.body)
-    const user = new User({...req.body, email_address: req.body.email});
+    const user = new User({...req.body, email_address: req.body.email, shopping_cart: []});
     console.log("mongoose user is: ", user)
     await user.save()
         .then((savedUser) => {
@@ -73,7 +85,7 @@ app.post('/user', async (req, res) => {
         })
         .catch((err) => {
             console.error(err);
-            res.status(500).json({ error: 'User creation failed' });
+            res.status(500).json({ error: 'Username already taken!' })
         });
 });
 
@@ -106,35 +118,198 @@ app.post('/updateprofile', async (req, res) => {
             res.status(500).json({ error: 'User update failed' });
         });
 });
-// 
-app.post("/createitem", upload.array('images'), async (req, res) => {
-    const formData = req.body;
-    console.log("formData is: ", formData)
-    // frontend can do formData.get('images') to get the array of images
-    // const data = JSON.parse(formData.data);
-    // console.log("parsed data is: ", data)
-    // frontend passes JSON.stringify(name, price, description, newused, formData, username: user.username) as body
-    // const { name, price, description, newused, username, formData } = req.body;
-    // const data = req.body.data;
-    // console.log("data is: ", data)
-    // const { name, price, description, newused, username } = data;
-
-    // formData holds new FormData() with formData.append('images', finalfiles[i]);
-    // console.log("name is: ", name)
-    // console.log("price is: ", price)
-    // console.log("description is: ", description)
-    // console.log("newused is: ", newused)
-    // console.log("username is: ", username)
-    // console.log("formData is: ", formData)
-
+// upload.single('images')
+app.post("/createitem", upload.single('images'), async (req, res, next) => {
+    console.log("itembody is: ", itembody)
+    console.log("req.files is: ", req.files)
+    let mongoimgarr = []
+    for (const file of req.files) {
+        console.log("file in loop is:", file)
+        const img = fs.readFileSync(file.path);
+        const encodeImage = img.toString('base64');
+        const finalImg = {
+            contentType: file.mimetype,
+            image: new Buffer.from(encodeImage, 'base64'),
+            // add name to image so frontend can display it
+            name: file.filename
+        };
+        mongoimgarr.push(finalImg)
+    }
     
     // find user with username
-    // User.findOne({ username: username }).then(async (user) => {
-    //     if (user) {
-            // save item here
-
-    //     }
-    // })
+    try {
+        await User.findOne({ username: itembody.username }).then(async (user) => {
+            if (user) {
+                // save item here
+                console.log("user is: ", user)
+                const item = new Item({
+                    name: itembody.name,
+                    price: Number(itembody.price),
+                    description: itembody.description,
+                    newused: itembody.newused,
+                    // images is an array of objects with data: Buffer, contentType: String
+                    images: mongoimgarr,
+                    // seller is a reference to the seller, so link to matching username
+                    seller: user
+                });
+                await item.save();
+                // add item to user's items
+                user.listed_items.push(item);
+                await user.save()
+                return res.status(200).json({ success: true });
+            }
+        })
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Item creation failed' });
+    }
 });
+
+app.get("/listeditems", async (req, res) => {
+    let username = req.query.username;
+    try {
+        const user = await User.findOne({ username: username }).populate('listed_items');
+        if (user) {
+            // user.listed_items will contain the populated items
+            res.json(user.listed_items);
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+})
+
+app.post("/addtoseller", async (req, res) => {
+    const { name, price, description, newused, link, username } = req.body;
+    try {
+        await User.findOne({ username: "MainSeller" }).then(async (user) => {
+            if (user) {
+                // save item here
+                console.log("user is: ", user)
+                console.log("link is: ", link)
+                const item = new Item({
+                    name, price, description, newused, link,
+                    // seller is a reference to the seller, so link to matching username
+                    seller: user
+                });
+                await item.save();
+
+                // add item to "MainSeller" listed_items
+                user.listed_items.push(item);
+                await user.save()
+                
+                // now add item to user's shopping cart
+                const user2 = await User.findOne({ username: username });
+                if (user2) {
+                    user2.shopping_cart.push(item);
+                    await user2.save();
+                }
+            }
+        })
+        return res.status(200).json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Item creation failed' });
+    }
+});
+
+app.get('/getallitems', async (req, res) => {
+    try {
+        const items = await Item.find({}).populate('seller');
+        if (items) {
+            res.json(items);
+        } else {
+            res.status(404).json({ error: 'Items not found' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+})
+
+app.get('/getuser', async (req, res) => {
+    let username = req.query.username;
+    try {
+        await User.findOne({ username: username }).populate({
+            path: 'listed_items',
+            populate: {
+                path: 'seller'
+            }
+        })
+            .then(async (user) => {
+                if (user) {
+                    res.status(200).json(user);
+                } else {
+                    res.status(404).json({ error: 'User not found' });
+                }
+            })
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+})
+
+app.get(`/cart`, async (req, res) => {
+    let username = req.query.username;
+    try {
+        await User.findOne({ username: username }).populate({
+            path: 'shopping_cart',
+            populate: {
+                path: 'seller'
+            }
+        })
+            .then(async (user) => {
+                if (user) {
+                    res.status(200).json(user);
+                } else {
+                    res.status(404).json({ error: 'User not found' });
+                }
+            })
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' })
+    }
+})
+
+app.post('/addtocart', async (req, res) => {
+    const { item, username } = req.body;
+    try {
+        await Item.findOne({ name: item.name }).then(async (item) => {
+            if (item) {
+                // now add item to user's shopping cart
+                await User.findOne({ username: username }).then(async (user) => {
+                    if (user) {
+                        user.shopping_cart.push(item);
+                        await user.save();
+                    }
+                })
+            }
+        })
+        return res.status(200).json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Item creation failed' });
+    }
+})
+
+app.post('/deleteitemfromcart', async (req, res) => {
+    const { username, itemid } = req.body;
+    try {
+        await User.findOne({ username: username }).then(async (user) => {
+            if (user) {
+                // remove item from user's shopping cart
+                user.shopping_cart.pull({ _id: itemid });
+                await user.save();
+            }
+        })
+        return res.status(200).json({ success: true, _id: itemid });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Item deletion failed' });
+    }
+})
+
 
 app.listen(process.env.PORT || 3001);
