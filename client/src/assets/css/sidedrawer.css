@@ -3,6 +3,18 @@
     width: 42% !important;
     padding: 1rem 2rem;
 }
+@media (max-width: 650px) {
+    .MuiDrawer-paperAnchorRight {
+        width: 100% !important;
+    }
+    .cartimg {
+        width: 25vw !important;
+    }
+    .cartitem > div {
+        padding: 5%;
+        font-size: 115%;
+    }
+}
 #sidedrawerdiv {
     display: flex;
     flex-direction: column;
@@ -36,8 +48,8 @@
     list-style-type: none;   
 }
 .css-1bntgh8-MuiSvgIcon-root{
-    width: 75px;
-    height: 75px;
+    width: 75px !important;
+    height: 75px !important;
 }
 .cartitem {
     display: flex;

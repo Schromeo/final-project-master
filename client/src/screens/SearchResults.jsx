@@ -11,31 +11,33 @@ export default function SearchResults() {
 
     return (
         <div className="content-wrapper">
-            <div class="content text1">
-                <div id="gridThumbs" class="portfolio-grid-overlay grid-wrapper collection-content-wrapper" data-controller="GridImages" data-animation-role="section"
+            <div className="content text1">
+                <div id="gridThumbs" className="portfolio-grid-overlay grid-wrapper collection-content-wrapper" data-controller="GridImages" data-animation-role="section"
                     data-controllers-bound="GridImages"
                 >
                     {items.map((item, index) => {
+                        console.log("item is: ", item)
                         return (
                             // we need to navigate to details and pass in the entire item object
-                            <a class="grid-item" key={index} onClick={() => {
+                            <a className="grid-item" key={index} onClick={() => {
                                 navigate(`/details/${item.productCode}`, { state: 
                                     { item: {...item, images: [item.imageUrl], 
-                                        description: item.brandName, price: item.price.current.text, newused: false,
+                                        description: item.brandName, price: item.price.current.text.substring(1), newused: false,
                                         seller: "MainSeller"
                                     }}
                                 });
                             }}>
-                                <div class="grid-image">
-                                    <div class="grid-image-inner-wrapper">
+                                <div className="grid-image">
+                                    <div className="grid-image-inner-wrapper">
                                         {/* change this later */}
                                         <img src={`https://${item.imageUrl}`} style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}/>
                                     </div>
                                 </div>
-                                <div class="portfolio-overlay"></div>
-                                <div class="portfolio-text">
-                                    <h3 class="portfolio-name">{item.name}</h3>
-                                    <h3 class="portfolio-price">{item.price.current.text}</h3>
+                                <div className="portfolio-overlay"></div>
+                                <div className="portfolio-text">
+                                    <h3 className="portfolio-name">{item.name}</h3>
+                                    <br />
+                                    <h3 className="portfolio-price">{item.price.current.text}</h3>
                                 </div>
                             </a>
                         )

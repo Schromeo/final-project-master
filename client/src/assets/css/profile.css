@@ -31,6 +31,7 @@
     font-style: oblique;
     font-family: 'gothicFont';
     color: rgb(163, 125, 29);
+    padding-inline: 3vw
 }
 @font-face {
     font-family: 'gothicFont';
@@ -43,4 +44,14 @@
 }
 .text1{
     font-family: 'text_1';
+}
+@media (max-width: 776px) {
+    #profilepic {
+        display: none;
+    }
+}
+@media (min-width: 320px) and (max-width: 480px) {
+    #profileparentdiv {
+        padding-inline: 3vw;
+    }
 }

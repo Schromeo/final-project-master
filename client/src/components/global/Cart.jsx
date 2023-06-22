@@ -56,6 +56,7 @@ export default function Cart({drawerstate, drawerfunc}) {
                                 <img key={index} src={item.link ? `https://${item.link}` :
                                     `http://localhost:3001/uploads/${item.images[0].name}`} alt={'item'} 
                                     style={{width: "10vw", objectPosition: "50% 50%", objectFit: "cover"}}
+                                    className='cartimg'
                                 />
                                 <div style={{marginLeft: "1vw"}}>
                                     <h3 className="portfolio-name">{item.name}</h3>

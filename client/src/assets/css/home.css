@@ -9,13 +9,24 @@
 .content {
     width: 100%;
 }
+#homepagecontent {
+    display: flex;
+    /* flex-direction: row; */
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: flex-start; */
+    align-items: center;
+}
+#homepagecontent > * {
+    width: 100%;
+}
 #gridThumbs {
     padding-top: 3.3vw;
     padding-bottom: 3.3vw;
     min-height: 33vh;
-    width: 100%;
-    padding-left: 3vw;
-    padding-right: 3vw;
+    width: 60%;
+    /* padding-left: 3vw;
+    padding-right: 3vw; */
     margin: 0 auto;
     box-sizing: border-box;
     display: grid;
@@ -23,6 +34,28 @@
     grid-column-gap: 10px;
     grid-row-gap: 10px;
     grid-auto-rows: min-content;
+    transition: all 0.3s ease-in-out;
+}
+/* #righthome {
+    position: absolute;
+    right: 12vw;
+} */
+#wishlistdiv {
+    display: grid;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+    grid-auto-rows: min-content;
+    width: 60%;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    margin: 5vh auto;
+}
+@media (max-width: 520px) {
+    #gridThumbs, #wishlistdiv {
+        grid-template-columns: repeat(1,minmax(0,1fr));
+    }
+    .h1s {
+        font-size: 500% !important;
+    }
 }
 .grid-item {
     padding-bottom: 75%;

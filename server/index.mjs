@@ -8,6 +8,7 @@ import fetch from 'node-fetch';
 import * as fs from 'fs';
 import bodyParser from 'body-parser';
 import {v4 as uuidv4} from 'uuid';
+import cors from "cors";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -16,6 +17,10 @@ const __dirname = path.dirname(__filename);
 let itembody = {};
 
 // app.use(express.static(path.join(__dirname, 'build')))
+app.use(cors({
+    credentials: true,
+    origin: process.env.NODE_ENV === 'production' ? [] : 'http://localhost:3000'
+}))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
@@ -54,6 +59,7 @@ app.use(upload.array('images'));
 // if mongoose is connected, set
 const User = mongoose.model('User');
 const Item = mongoose.model('Item');
+const Wishlist = mongoose.model('Wishlist');
 
 app.get('/user', (req, res) => {
     const { email, password } = req.query;
@@ -76,10 +82,11 @@ app.get('/user', (req, res) => {
 
 app.post('/user', async (req, res) => {
     console.log("user is: ", req.body)
-    const user = new User({...req.body, email_address: req.body.email, shopping_cart: []});
+    // create a new user with a wishlistschema linked to user.wisjlist
+    const user = new User({...req.body, email_address: req.body.email});
     console.log("mongoose user is: ", user)
     await user.save()
-        .then((savedUser) => {
+        .then(async (savedUser) => {
             console.log("user is: ", savedUser);
             res.json(savedUser);
         })
@@ -118,7 +125,7 @@ app.post('/updateprofile', async (req, res) => {
             res.status(500).json({ error: 'User update failed' });
         });
 });
-// upload.single('images')
+
 app.post("/createitem", upload.single('images'), async (req, res, next) => {
     console.log("itembody is: ", itembody)
     console.log("req.files is: ", req.files)
@@ -150,11 +157,15 @@ app.post("/createitem", upload.single('images'), async (req, res, next) => {
                     // images is an array of objects with data: Buffer, contentType: String
                     images: mongoimgarr,
                     // seller is a reference to the seller, so link to matching username
-                    seller: user
+                    seller: user,
                 });
                 await item.save();
-                // add item to user's items
-                user.listed_items.push(item);
+                // if listed_items exists, push item to it, else create it
+                if (user.listed_items) {
+                    user.listed_items.push(item);
+                } else {
+                    user.listed_items = [item];
+                }
                 await user.save()
                 return res.status(200).json({ success: true });
             }
@@ -192,7 +203,7 @@ app.post("/addtoseller", async (req, res) => {
                 const item = new Item({
                     name, price, description, newused, link,
                     // seller is a reference to the seller, so link to matching username
-                    seller: user
+                    seller: user,
                 });
                 await item.save();
 
@@ -203,7 +214,11 @@ app.post("/addtoseller", async (req, res) => {
                 // now add item to user's shopping cart
                 const user2 = await User.findOne({ username: username });
                 if (user2) {
-                    user2.shopping_cart.push(item);
+                    if (user2.shopping_cart) {
+                        user2.shopping_cart.push(item);
+                    } else {
+                        user2.shopping_cart = [item];
+                    }
                     await user2.save();
                 }
             }
@@ -281,7 +296,11 @@ app.post('/addtocart', async (req, res) => {
                 // now add item to user's shopping cart
                 await User.findOne({ username: username }).then(async (user) => {
                     if (user) {
-                        user.shopping_cart.push(item);
+                        if (user.shopping_cart) {
+                            user.shopping_cart.push(item);
+                        } else {
+                            user.shopping_cart = [item];
+                        }
                         await user.save();
                     }
                 })
@@ -311,5 +330,63 @@ app.post('/deleteitemfromcart', async (req, res) => {
     }
 })
 
+app.post('/addtowishlist', async (req, res) => {
+    const { item, username } = req.body;
+    try {
+        await Item.findOne({ name: item.name }).then(async (item) => {
+            if (item) {
+                // now add item to user's shopping cart
+                await User.findOne({ username: username }).populate('wishlist').then(async (user) => {
+                    if (user) {
+                        // user.wishlist references wishlistSchema
+                        // user.wishlist.items references itemSchema
+                        await Wishlist.findOne({ user }).then(async (wishlist) => {
+                            if (wishlist) {
+                                wishlist.items.push(item);
+                                await wishlist.save();
+                            } else {
+                                const newwishlist = new Wishlist({
+                                    user, items: [item]
+                                })
+                                await newwishlist.save();
+                                user.wishlist = newwishlist;
+                                await user.save();
+                            }
+                        })
+                    }
+                })
+            }
+        })
+        return res.status(200).json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Item creation failed' });
+    }
+})
+
+app.get(`/wishlist`, async (req, res) => {
+    let username = req.query.username;
+    try {
+        await User.findOne({ username }).populate({
+            path: 'wishlist',
+            populate: {
+                path: 'items',
+                populate: {
+                    path: 'seller'
+                }
+            }
+        })
+            .then(async (user) => {
+                if (user) {
+                    res.status(200).json(user);
+                } else {
+                    res.status(404).json({ error: 'User not found' });
+                }
+            })
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' })
+    }
+})
 
 app.listen(process.env.PORT || 3001);

@@ -9,16 +9,8 @@
 .globaldiv * {
     font-size: 1.25rem;
 }
-.globaldiv input{
-    border: 2px solid gray;
-    border-radius: 8px;
-    padding-inline: 0.25rem
-}
 .labeldiv {
     display: inline-block;
-}
-.labeldiv label {
-    margin-right: 0.5rem;
 }
 #profileparentdiv {
     display: flex;
@@ -27,14 +19,6 @@
     align-items: center;
     column-gap: 5vw;
     margin-top: 10vh;
-}
-.h1s {
-    text-align: center;
-    font-size: 8.5rem;
-    margin-block: 1rem;
-    font-style: oblique;
-    font-family: 'gothicFont';
-    color: rgb(163, 125, 29);
 }
 @font-face {
     font-family: 'gothicFont';
@@ -60,6 +44,9 @@
 #loginform {
     align-items: flex-start;
 }
+#loginform .labeldiv {
+    padding-left: 4vw;
+}
 #logindiv {
     display: flex;
     flex-direction: row;
@@ -67,4 +54,9 @@
     align-items: center;
     column-gap: 1rem;
     margin-top: 10vh;
+}
+@media (max-width: 600px) {
+    #loginpic {
+        display: none;
+    }
 }

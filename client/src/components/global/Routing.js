@@ -21,7 +21,7 @@ export default function Routing() {
     return (
         <Router>
             <Navbar drawerfunc={setDrawerOpen} />
-            <Cart drawerstate={drawerOpen} drawerfunc={setDrawerOpen} />
+            {user && <Cart drawerstate={drawerOpen} drawerfunc={setDrawerOpen} />}
             {user ? (
                 <Routes>
                     <Route exact path='/' element={<Home />} />
@@ -30,7 +30,7 @@ export default function Routing() {
                     <Route exact path='listeditems' element={<ListedItems />} />
                     <Route exact path='/edititem/:id' element={<EditItem />} />
                     <Route exact path='/details/:id' element={<ItemDetails />} />
-                    <Route exact path='/search' element={<SearchResults />} />
+                    <Route path='/search/:searchtag' element={<SearchResults />} />
                     <Route exact path='/profile/:id' element={<ViewProfile />} />
                 </Routes>
             ) : (
@@ -38,7 +38,7 @@ export default function Routing() {
                     <Route exact path='/' element={<Home />} />
                     <Route exact path="/login" element={<Login />} />
                     <Route exact path="/signup" element={<Signup />} />
-                    <Route exact path='/search' element={<SearchResults />} />
+                    <Route path='/search/:searchtag' element={<SearchResults />} />
                     <Route exact path='/details/:id' element={<ItemDetails />} />
                     <Route exact path='/profile/:id' element={<ViewProfile />} />
                     {/* same for profile */}

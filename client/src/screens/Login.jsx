@@ -53,7 +53,6 @@ export default function Login() {
                         </button>
                     </div>
                 </div>
-                {/* <div className="col-8"> */}
                 <img id="loginpic" className="carddiv" src={require(`../images/lion_head.png`) }
                     alt="log in pic" style={{width: '48%', borderRadius: '12px'}}
                 />

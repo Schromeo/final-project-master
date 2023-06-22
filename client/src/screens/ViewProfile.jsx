@@ -33,12 +33,12 @@ export default function ViewProfile() {
                             <p>Role: {viewedUser.role}</p>
                             <p>Email: {viewedUser.email_address}</p>
                             <div className="content-wrapper text1">
-                                <div class="content">
+                                <div className="content">
                                     <div id="gridThumbs" style={{padding: '0px'}}
-                                        class="portfolio-grid-overlay grid-wrapper collection-content-wrapper" data-controller="GridImages" data-animation-role="section" data-controllers-bound="GridImages">
+                                        className="portfolio-grid-overlay grid-wrapper collection-content-wrapper" data-controller="GridImages" data-animation-role="section" data-controllers-bound="GridImages">
                                         {viewedUser.listed_items.map((item, index) => {
                                             return (
-                                                <a class="grid-item"
+                                                <a className="grid-item"
                                                     onClick={() => {
                                                         navigate(`/details/${item.slug}`, 
                                                             { state: { 
@@ -49,19 +49,19 @@ export default function ViewProfile() {
                                                         )
                                                     }}
                                                     key={index}>
-                                                    <div class="grid-image">
-                                                        <div class="grid-image-inner-wrapper">
+                                                    <div className="grid-image">
+                                                        <div className="grid-image-inner-wrapper">
                                                             <img src={item.link ? `https://${item.link}` :
                                                                 `http://localhost:3001/uploads/${item.images[0].name}`} alt='itemimg'
                                                                 style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}
                                                             />
                                                         </div>
                                                     </div>
-                                                    <div class="portfolio-overlay"></div>
-                                                    <div class="portfolio-text">
-                                                        <h3 class="portfolio-name">{item.name}</h3>
-                                                        <h3 class="portfolio-price">{item.price}</h3>
-                                                    </div>
+                                                    {/* <div className="portfolio-overlay"></div>
+                                                    <div className="portfolio-text">
+                                                        <h3 className="portfolio-name">{item.name}</h3>
+                                                        <h3 className="portfolio-price">{item.price}</h3>
+                                                    </div> */}
                                                 </a>
                                             )
                                         })}

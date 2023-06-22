@@ -5,6 +5,8 @@ import mongooseSlugPlugin from 'mongoose-slug-plugin';
 import fs from 'fs';
 import path from 'path';
 import url from 'url';
+const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || "mongodb://127.0.0.1:27017/commerce";
+mongoose.connect(CONNECTION_STRING);
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 // create a User Schema
@@ -19,6 +21,8 @@ const UserSchema = new mongoose.Schema({
     shopping_cart: [{type: mongoose.Schema.Types.ObjectId, ref: 'Item'}],
     listed_items: [{type: mongoose.Schema.Types.ObjectId, ref: 'Item'}],
     interests: [{type: String, required: false}],
+    // link to a wishlist
+    wishlist: {type: mongoose.Schema.Types.ObjectId, ref: 'Wishlist'},
 });
 
 const ItemSchema = new mongoose.Schema({
@@ -34,7 +38,13 @@ const ItemSchema = new mongoose.Schema({
         name: String
     }],
     // reference to the seller
-    seller: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+    seller: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    wishlist_users: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
+});
+
+const WishlistSchema = new mongoose.Schema({
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 });
 
 // link the slug plugin to the ItemSchema
@@ -42,6 +52,4 @@ ItemSchema.plugin(mongooseSlugPlugin, { tmpl: '<%=name%>' });
 
 mongoose.model('User', UserSchema);
 mongoose.model('Item', ItemSchema);
-
-const dbconf = 'mongodb://localhost/commerce';
-mongoose.connect(dbconf);
+mongoose.model('Wishlist', WishlistSchema);

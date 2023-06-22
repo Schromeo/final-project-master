@@ -13,15 +13,15 @@ export default function Profile() {
     const [address, setAddress] = useState(user.address);
     const navigate = useNavigate();
 
-    console.log("user:", user)
     const options = [
-        {value: 'option1', label: 'Option 1'},
-        {value: 'option2', label: 'Option 2'},
-        {value: 'option3', label: 'Option 3'},
-        {value: 'option4', label: 'Option 4'},
-        {value: 'option5', label: 'Option 5'},
-        {value: 'option6', label: 'Option 6'},
+        { value: 'Electronic', label: 'Electronic' },
+        { value: 'Clothing', label: 'Clothing' },
+        { value: 'Pets', label: 'Pets' },
+        { value: 'Toys', label: 'Toys' },
+        { value: 'Jewelry', label: 'Jewelry' },
+        { value: 'Sports', label: 'Sports' },
     ]
+
     return (
         <div>
             <h1 className='h1s'>Profile</h1>
@@ -72,6 +72,7 @@ export default function Profile() {
                                     fontSize: '1rem',
                                 }),
                             }}
+                            placeholder="Select your interests..."
                         />
                     }
                     <button className="btn btn-outline-success my-sm-0 ml-5 " onClick={() => 

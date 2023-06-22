@@ -56,7 +56,7 @@ export default function Navbar({ drawerfunc }) {
                                         const response = await axios.request(options);
                                         console.log("data:", response.data);
                                         setLoading(false);
-                                        navigate("/search", { state: { items: response.data.products } });
+                                        navigate(`/search/${searchTerm}`, { state: { items: response.data.products } });
                                     } catch (error) {
                                         console.error(error);
                                     }
@@ -66,6 +66,9 @@ export default function Navbar({ drawerfunc }) {
                             </button>
                         </form>
                         <ul className="navbar-nav mr-3 ml-auto">
+                            <li className="nav-item active">
+                                <a className="nav-link" href="/#">Home</a>
+                            </li>
                             {user && user.role === "Seller" && (
                                 <li className="nav-item active">
                                     <a className="nav-link" href="/#/listeditems">Selling</a>
@@ -162,7 +165,7 @@ export default function Navbar({ drawerfunc }) {
                                         const response = await axios.request(options);
                                         console.log("data:", response.data);
                                         setLoading(false);
-                                        navigate("/search", { state: { items: response.data.products } });
+                                        navigate(`/search/${searchTerm}`, { state: { items: response.data.products } });
                                     } catch (error) {
                                         console.error(error);
                                     }
@@ -172,6 +175,9 @@ export default function Navbar({ drawerfunc }) {
                             </button>
                         </form>
                         <ul className="navbar-nav mr-3 ml-auto">
+                            <li className="nav-item active">
+                                <a className="nav-link" href="/#">Home</a>
+                            </li>
                             {user && user.role === "Seller" && (
                                 <li className="nav-item active">
                                     <a className="nav-link" href="/#/listeditems">Selling</a>

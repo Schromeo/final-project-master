@@ -36,7 +36,7 @@ export default function Signup() {
             ) : (
                 // this will be signup form
                 <div>
-                    <h1 className="h1s">Welcome New {role}</h1>
+                    <h1 id="signuph2" className="h1s">Welcome New {role}</h1>
                     <div id="logindiv" className="globaldiv text1">
                         <div id="loginform" className="globaldiv">
                             <div className='labeldiv'>
@@ -84,7 +84,7 @@ export default function Signup() {
                                 Sign Up
                             </button>
                         </div>
-                        <img id="loginpic" className="carddiv" src={require(`../images/lion_head.png`) }
+                        <img id="signuppic" className="carddiv" src={require(`../images/lion_head.png`) }
                             alt="log in pic" style={{width: '48%', borderRadius: '12px'}}
                         />
                     </div>

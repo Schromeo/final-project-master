@@ -65,6 +65,24 @@
     font-family: 'gothicFont';
     color: rgb(163, 125, 29);
 }
+@media (max-width: 477px) {
+    #signuph1 {
+        font-size: 700%;
+    }
+}
+@media (max-width: 889px) {
+    #signuppic {
+        display: none;
+    }
+}
+#signuph2 {
+    transition: all .3s;
+}
+@media (max-width: 507px) {
+    #signuph2 {
+        font-size: 500%;
+    }
+}
 @font-face {
     font-family: 'gothicFont';
     src: url(../font/Angel\ wish.ttf) format('truetype');
