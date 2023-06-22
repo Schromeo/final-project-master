@@ -40,7 +40,7 @@ export default function ViewProfile() {
                                                     onClick={() => {
                                                         navigate(`/details/${item.slug}`, 
                                                             { state: { 
-                                                                item: {...item, images: item.images.map((image) => `localhost:3001/uploads/${image.name}`), 
+                                                                item: {...item, images: item.images.map((image) => `${fetchlink}/uploads/${image.name}`), 
                                                                     seller: item.seller.username
                                                                 }
                                                             } }
