@@ -6,6 +6,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import './App.css';
 
+// change fetch link based on whether in development or production
+export const fetchlink = process.env.NODE_ENV === 'production' ? ''
 export const AuthContext = createContext();
 
 export default function App() {
