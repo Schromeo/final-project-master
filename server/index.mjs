@@ -19,7 +19,7 @@ let itembody = {};
 // app.use(express.static(path.join(__dirname, 'build')))
 app.use(cors({
     credentials: true,
-    origin: process.env.NODE_ENV === 'production' ? [] : 'http://localhost:3000'
+    origin: process.env.NODE_ENV === 'production' ? ['https://6493f148b713982fd7677885--schromeo-store.netlify.app', 'https://final-project-1f5v.onrender.com'] : 'http://localhost:3000'
 }))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
