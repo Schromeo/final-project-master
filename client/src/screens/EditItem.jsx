@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react'
 import Select from 'react-select'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { AuthContext } from '../App'
+import { AuthContext, fetchlink } from '../App'
 
 export default function EditItem() {
     const location = useLocation()
@@ -61,7 +61,7 @@ export default function EditItem() {
                     e.preventDefault();
                     console.log("e.target: ", e.target);
                     var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "http://localhost:3001/edititem");
+                    xhr.open("POST", `${fetchlink}/edititem`);
                     xhr.onload = function (event) {
                       if (xhr.status === 200) {
                         let response = JSON.parse(xhr.responseText);

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import Select from 'react-select'
 import { toast } from 'react-toastify';
-import { AuthContext } from '../App';
+import { AuthContext, fetchlink } from '../App'
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/profile.css'
 
@@ -76,7 +76,7 @@ export default function Profile() {
                         />
                     }
                     <button className="btn btn-outline-success my-sm-0 ml-5 " onClick={() => 
-                        fetch('http://localhost:3001/updateprofile', {
+                        fetch(`${fetchlink}/updateprofile`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",

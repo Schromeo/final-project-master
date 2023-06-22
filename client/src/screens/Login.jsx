@@ -1,5 +1,5 @@
 import { useState, useContext } from "react"
-import { AuthContext } from "../App"
+import { AuthContext, fetchlink } from '../App'
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -30,7 +30,7 @@ export default function Login() {
                         {/* make call to index.mjs and get user with matching details using "?" query */}
                         <button className="btn btn-outline-success my-2 my-sm-0 ml-xl-5" onClick={() => {
                             // pass {email, password} to index.mjs on local
-                            fetch("http://localhost:3001/user?email=" + email + "&password=" + password, {
+                            fetch(`${fetchlink}/user?email=` + email + "&password=" + password, {
                                 method: "GET",
                                 headers: {"Content-Type": "application/json"}
                             })

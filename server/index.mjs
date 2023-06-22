@@ -335,13 +335,16 @@ app.post('/addtowishlist', async (req, res) => {
     try {
         await Item.findOne({ name: item.name }).then(async (item) => {
             if (item) {
+                console.log("item found in addtowishlist: ", item)
                 // now add item to user's shopping cart
                 await User.findOne({ username: username }).populate('wishlist').then(async (user) => {
                     if (user) {
+                        console.log("user found in addtowishlist: ", user)
                         // user.wishlist references wishlistSchema
                         // user.wishlist.items references itemSchema
-                        await Wishlist.findOne({ user }).then(async (wishlist) => {
+                        await Wishlist.findOne({ user }).populate('items').then(async (wishlist) => {
                             if (wishlist) {
+                                console.log("wishlist found in addtowishlist: ", wishlist)
                                 wishlist.items.push(item);
                                 await wishlist.save();
                             } else {
@@ -349,8 +352,10 @@ app.post('/addtowishlist', async (req, res) => {
                                     user, items: [item]
                                 })
                                 await newwishlist.save();
+                                console.log("newwishlist created in addtowishlist: ", newwishlist)
                                 user.wishlist = newwishlist;
                                 await user.save();
+                                console.log("user updated in addtowishlist: ", user)
                             }
                         })
                     }

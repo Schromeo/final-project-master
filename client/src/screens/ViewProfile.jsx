@@ -1,14 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
-import Select from 'react-select'
-import { toast } from 'react-toastify';
-import { AuthContext } from '../App';
+import { AuthContext, fetchlink } from '../App';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export default function ViewProfile() {
     const params = useParams()
     const [viewedUser, setViewedUser] = useState({})
     useEffect(() => {
-        fetch(`http://localhost:3001/getuser?username=${params.id}`)
+        fetch(`${fetchlink}/getuser?username=${params.id}`)
             .then(res => res.json())
             .then(data => {
                 console.log("data is: ", data)
@@ -52,7 +50,7 @@ export default function ViewProfile() {
                                                     <div className="grid-image">
                                                         <div className="grid-image-inner-wrapper">
                                                             <img src={item.link ? `https://${item.link}` :
-                                                                `http://localhost:3001/uploads/${item.images[0].name}`} alt='itemimg'
+                                                                `${fetchlink}/uploads/${item.images[0].name}`} alt='itemimg'
                                                                 style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}
                                                             />
                                                         </div>

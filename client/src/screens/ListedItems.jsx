@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../App';
+import { AuthContext, fetchlink } from '../App';
 import { useNavigate } from 'react-router-dom';
 
 export default function ListedItems() {
@@ -7,7 +7,7 @@ export default function ListedItems() {
     const [items, setItems] = useState([])
     const navigate = useNavigate();
     useEffect(() => {
-        fetch(`http://localhost:3001/listeditems?username=${user.username}`)
+        fetch(`${fetchlink}/listeditems?username=${user.username}`)
             .then(res => res.json())
             .then(data => {
                 console.log("data: ", data);
@@ -30,7 +30,7 @@ export default function ListedItems() {
                                 <div class="grid-image">
                                     <div class="grid-image-inner-wrapper">
                                         {/* change this later */}
-                                        <img src={`http://localhost:3001/uploads/${item.images[0].name}`} style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}/>
+                                        <img src={`${fetchlink}/uploads/${item.images[0].name}`} style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}/>
                                     </div>
                                 </div>
                                 <div class="portfolio-overlay"></div>

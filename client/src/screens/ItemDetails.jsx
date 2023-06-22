@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react'
 import Select from 'react-select'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { AuthContext } from '../App'
+import { AuthContext, fetchlink } from '../App'
 import '../assets/css/itemdetails.css'
 
 export default function ItemDetails() {
@@ -52,7 +52,7 @@ export default function ItemDetails() {
                             user.role === "Buyer" &&
                                 item.brandName ?
                                     // first make call to the backend to add this item to 'Main Seller'
-                                    fetch('http://localhost:3001/addtoseller', {
+                                    fetch(`${fetchlink}/addtoseller`, {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ export default function ItemDetails() {
                                     })
                                 :
                                     // then make call to the backend to add this item to the user's cart
-                                    fetch('http://localhost:3001/addtocart', {
+                                    fetch(`${fetchlink}/addtocart`, {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json'
@@ -124,7 +124,7 @@ export default function ItemDetails() {
                     className='btn btn-outline-success my-2 my-sm-0' onClick={() =>
                         user ?
                             user.role === "Buyer" &&
-                                fetch('http://localhost:3001/addtowishlist', {
+                                fetch(`${fetchlink}/addtowishlist`, {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json'

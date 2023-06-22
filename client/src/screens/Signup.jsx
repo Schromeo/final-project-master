@@ -1,5 +1,5 @@
 import { useState, useContext } from "react"
-import { AuthContext } from "../App"
+import { AuthContext, fetchlink } from "../App"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify";
 import '../assets/css/signup.css'
@@ -55,7 +55,7 @@ export default function Signup() {
                             <button className="btn btn-outline-success my-2 my-sm-0 align-self-center" onClick={() => {
                                 console.log(`username: ${username}, email: ${email}, password: ${password}, role: ${role}`)
                                 // fetch to localhost:3001/user
-                                fetch("http://localhost:3001/user", {
+                                fetch(`${fetchlink}/user`, {
                                     method: "POST",
                                     headers: {
                                         "Content-Type": "application/json"

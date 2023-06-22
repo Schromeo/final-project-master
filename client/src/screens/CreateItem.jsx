@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react'
 import Select from 'react-select'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { AuthContext } from '../App'
+import { AuthContext, fetchlink } from '../App'
 import '../assets/css/createitem.css'
 
 export default function CreateItem() {
@@ -69,7 +69,7 @@ export default function CreateItem() {
                         return;
                     } else {
                         var xhr = new XMLHttpRequest();
-                        xhr.open("POST", "http://localhost:3001/createitem");
+                        xhr.open("POST", `${fetchlink}/createitem`);
                         xhr.onload = function (event) {
                         if (xhr.status === 200) {
                             let response = JSON.parse(xhr.responseText);

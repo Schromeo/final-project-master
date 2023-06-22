@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { AuthContext } from '../App';
+import { AuthContext, fetchlink } from '../App';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/home.css';
 
@@ -9,14 +9,14 @@ export default function Home() {
     const [wishlistItems, setWishlistItems] = useState([]);
     const navigate = useNavigate();
     useEffect(() => {
-        fetch('http://localhost:3001/getallitems')
+        fetch(`${fetchlink}/getallitems`)
             .then(res => res.json())
             .then(data => {
                 console.log(data);
                 // reverse data
                 setItems(data.reverse());
                 if (user && user.role === 'Buyer') {
-                    fetch(`http://localhost:3001/wishlist?username=${user.username}`)
+                    fetch(`${fetchlink}/wishlist?username=${user.username}`)
                         .then(res2 => res2.json())
                         .then(data2 => {
                             console.log("returned wishlist items", data2)
@@ -36,38 +36,42 @@ export default function Home() {
                     {user && user.role === 'Buyer' && (
                         <div id='lefthome'>
                             <p style={{textAlign: 'center', textDecoration: 'underline', fontSize: '150%'}}>Wishlist</p>
-                            <div id="wishlistdiv" className="portfolio-grid-overlay grid-wrapper collection-content-wrapper" data-controller="GridImages" data-animation-role="section" data-controllers-bound="GridImages">
-                                {wishlistItems.map((item, index) => {
-                                    console.log("item", item)
-                                    return (
-                                        <a className="grid-item"
-                                            onClick={() => {
-                                                navigate(`/details/${item.slug}`, 
-                                                    { state: { 
-                                                        item: {...item, images: item.images.map((image) => `localhost:3001/uploads/${image.name}`), 
-                                                            seller: item.seller.username
-                                                        }
-                                                    } }
-                                                )
-                                            }}
-                                            key={index}>
-                                            <div className="grid-image">
-                                                <div className="grid-image-inner-wrapper">
-                                                    <img src={item.link ? `https://${item.link}` :
-                                                        `http://localhost:3001/uploads/${item.images[0].name}`} alt='itemimg'
-                                                        style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}
-                                                    />
+                            {wishlistItems.length === 0 ? 
+                                <p style={{textAlign: 'center', marginBlock: '2vh', fontSize: '120%'}}>No items in wishlist</p>
+                            :
+                                <div id="wishlistdiv" className="portfolio-grid-overlay grid-wrapper collection-content-wrapper" data-controller="GridImages" data-animation-role="section" data-controllers-bound="GridImages">
+                                    {wishlistItems.map((item, index) => {
+                                        console.log("item", item)
+                                        return (
+                                            <a className="grid-item"
+                                                onClick={() => {
+                                                    navigate(`/details/${item.slug}`, 
+                                                        { state: { 
+                                                            item: {...item, images: item.images.map((image) => `localhost:3001/uploads/${image.name}`), 
+                                                                seller: item.seller.username
+                                                            }
+                                                        } }
+                                                    )
+                                                }}
+                                                key={index}>
+                                                <div className="grid-image">
+                                                    <div className="grid-image-inner-wrapper">
+                                                        <img src={item.link ? `https://${item.link}` :
+                                                            `${fetchlink}/uploads/${item.images[0].name}`} alt='itemimg'
+                                                            style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            {/* <div className="portfolio-overlay"></div>
-                                            <div className="portfolio-text">
-                                                <h3 className="portfolio-name">{item.name}</h3>
-                                                <h3 className="portfolio-price">${item.price}</h3>
-                                            </div> */}
-                                        </a>
-                                    )
-                                })}
-                            </div>
+                                                {/* <div className="portfolio-overlay"></div>
+                                                <div className="portfolio-text">
+                                                    <h3 className="portfolio-name">{item.name}</h3>
+                                                    <h3 className="portfolio-price">${item.price}</h3>
+                                                </div> */}
+                                            </a>
+                                        )
+                                    })}
+                                </div>
+                            }
                         </div>
                     )}
                     <div id='righthome'>
@@ -92,7 +96,7 @@ export default function Home() {
                                         <div className="grid-image">
                                             <div className="grid-image-inner-wrapper">
                                                 <img src={item.link ? `https://${item.link}` :
-                                                    `http://localhost:3001/uploads/${item.images[0].name}`} alt='itemimg'
+                                                    `${fetchlink}/uploads/${item.images[0].name}`} alt='itemimg'
                                                     style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}
                                                 />
                                             </div>
@@ -100,6 +104,7 @@ export default function Home() {
                                         <div className="portfolio-overlay"></div>
                                         <div className="portfolio-text">
                                             <h3 className="portfolio-name">{item.name}</h3>
+                                            <br />
                                             <h3 className="portfolio-price">${item.price}</h3>
                                         </div>
                                     </a>

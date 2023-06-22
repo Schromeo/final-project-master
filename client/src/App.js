@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import './App.css';
 
 // change fetch link based on whether in development or production
-export const fetchlink = process.env.NODE_ENV === 'production' ? ''
+export const fetchlink = process.env.NODE_ENV === 'production' ? 'https://final-project-1f5v.onrender.com' : 'http://localhost:3001';
 export const AuthContext = createContext();
 
 export default function App() {
