@@ -3,7 +3,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
-import { AuthContext } from '../../App';
+import { AuthContext, fetchlink } from '../../App';
 import { toast } from 'react-toastify';
 import '../../assets/css/sidedrawer.css'
 
@@ -15,7 +15,7 @@ export default function Cart({drawerstate, drawerfunc}) {
         if (drawerstate) {
             if (user) {
                 // check backend for current cart
-                fetch(`http://localhost:3001/cart?username=${user.username}`)
+                fetch(`${fetchlink}/cart?username=${user.username}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data.error) {
@@ -54,7 +54,7 @@ export default function Cart({drawerstate, drawerfunc}) {
                         return (
                             <div className="cartitem" key={index}>
                                 <img key={index} src={item.link ? `https://${item.link}` :
-                                    `http://localhost:3001/uploads/${item.images[0].name}`} alt={'item'} 
+                                    `${fetchlink}/uploads/${item.images[0].name}`} alt={'item'} 
                                     style={{width: "10vw", objectPosition: "50% 50%", objectFit: "cover"}}
                                     className='cartimg'
                                 />
@@ -65,7 +65,7 @@ export default function Cart({drawerstate, drawerfunc}) {
                                 {/* delete button */}
                                 <button className="btn btn-outline-red my-2 my-sm-0 ml-3"
                                     onClick={() => {
-                                        fetch(`http://localhost:3001/deleteitemfromcart`, {
+                                        fetch(`${fetchlink}/deleteitemfromcart`, {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json'
