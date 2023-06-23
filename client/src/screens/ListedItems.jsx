@@ -11,22 +11,7 @@ export default function ListedItems() {
     useEffect(() => {
         fetch(`${fetchlink}/listeditems?username=${user.username}`)
             .then(res => res.json())
-            .then(async(data) => {
-                console.log("data: ", data);
-                // we also need to add downloadURL from firebase storage
-                await Promise.all(data.map(async (item) => {
-                    item.images = [];
-                    const imagefolder = ref(storage, `images/${item._id}`);
-                    // iterate through the images in the referenced folder
-                    const imagesRef = await listAll(imagefolder);
-                    await Promise.all(imagesRef.items.map(async (imageRef) => {
-                        const downloadURL = await getDownloadURL(imageRef);
-                        item.images.push({ name: downloadURL });
-                    }));
-                }));
-                console.log("new data: ", data);
-                setItems(data);
-            })
+            .then((data) => setItems(data))
     }, [])
 
     return (
@@ -38,14 +23,12 @@ export default function ListedItems() {
                     {items.map((item, index) => {
                         return (
                             // we need to navigate to details and pass in the entire item object
-                            <a class="grid-item" key={index} onClick={() => {
-                                navigate(`/edititems/${item.slug}`, { state: { item: {...item, description: item.brandName } } })
-                            }}>
+                            <a class="grid-item" key={index} onClick={() => navigate(`/edititem/${item.slug}`, { state: { item } } ) }>
                                 <div class="grid-image">
                                     <div class="grid-image-inner-wrapper">
                                         {/* change this later */}
                                         <img
-                                            src={item.images[0] ? `${item.images[0].name}` : "https://th.bing.com/th/id/OIP.ysUCmaO4nRgDuP991HxwegHaHa?pid=ImgDet&rs=1"}
+                                            src={item.images[0]}
                                             style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}
                                         />
                                     </div>
@@ -53,6 +36,7 @@ export default function ListedItems() {
                                 <div class="portfolio-overlay"></div>
                                 <div class="portfolio-text">
                                     <h3 class="portfolio-name">{item.name}</h3>
+                                    <br />
                                     <h3 class="portfolio-price">${item.price}</h3>
                                 </div>
                             </a>

@@ -356,4 +356,44 @@ app.post('/addimages', async (req, res) => {
     }
 })
 
+app.get('/deleteitem', async (req, res) => {
+    const { itemid } = req.query;
+    try {
+        await Item.findOne({ _id: itemid }).then(async (item) => {
+            if (item) {
+                await User.findOne({ _id: item.seller }).then(async (user) => {
+                    if (user) {
+                        user.listed_items.pull({ _id: itemid });
+                        await user.save();
+                    }
+                })
+                await Item.deleteOne({ _id: itemid });
+            }
+        })
+        return res.status(200).json({ success: true })
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Item deletion failed' });
+    }
+})
+
+app.post('/updateitem', async (req, res) => {
+    const { name, price, description, newused, itemid } = req.body;
+    try {
+        await Item.findOne({ _id: itemid }).then(async (item) => {
+            if (item) {
+                item.name = name;
+                item.price = price;
+                item.description = description;
+                item.newused = newused;
+                await item.save();
+            }
+        })
+        return res.status(200).json({ success: true, itemid })
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Item update failed' });
+    }
+})
+
 app.listen(process.env.PORT || 3001);

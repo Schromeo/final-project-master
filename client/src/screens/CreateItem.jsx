@@ -114,23 +114,28 @@ export default function CreateItem() {
                                             }
                                         })
                                         .catch((err) => {
+                                            console.log(err)
                                             toast.error(`Error listing item: ${err}`, {
                                                 position: "top-center",
                                                 colored: true,
                                             });
+                                            setLoading(false);
                                         })
                                 } else {
                                     toast.error("Error listing item!", {
                                         position: "top-center",
                                         colored: true,
                                     });
+                                    setLoading(false);
                                 }
                             })
                             .catch((err) => {
+                                console.log(err)
                                 toast.error(`Error listing item: ${err}`, {
                                     position: "top-center",
                                     colored: true,
                                 });
+                                setLoading(false);
                             })
                     };
                   }}
