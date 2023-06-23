@@ -53,8 +53,7 @@ export default function Cart({drawerstate, drawerfunc}) {
                     {currentCart.map((item, index) => {
                         return (
                             <div className="cartitem" key={index}>
-                                <img key={index} src={item.link ? `https://${item.link}` :
-                                    `${fetchlink}/uploads/${item.images[0].name}`} alt={'item'} 
+                                <img key={index} src={item.images[0]} alt={'item'} 
                                     style={{width: "10vw", objectPosition: "50% 50%", objectFit: "cover"}}
                                     className='cartimg'
                                 />

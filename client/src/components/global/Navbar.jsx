@@ -94,15 +94,17 @@ export default function Navbar({ drawerfunc }) {
                                 <FontAwesomeIcon icon={faUserSecret} size="2xl" />
                             )}
                         </button>
-                        <button onClick={() => {
-                            if (user) {
-                                drawerfunc(true);
-                            } else {
-                                navigate("/login");
-                            }
-                        }}>
-                            <FontAwesomeIcon icon={faCartShopping} size="2xl" />
-                        </button>
+                        {user && user.role === "Buyer" ? (
+                            <button onClick={() => drawerfunc(true)}>
+                                <FontAwesomeIcon icon={faCartShopping} size="2xl" />
+                            </button>
+                        ) : (
+                            !user && (
+                                <button onClick={() => navigate("/login")}>
+                                    <FontAwesomeIcon icon={faCartShopping} size="2xl" />
+                                </button>
+                            )
+                        )}
                         {user && (
                             <button
                                 className="btn btn-outline-red my-2 my-sm-0 ml-3"

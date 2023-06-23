@@ -47,7 +47,7 @@ export default function Home() {
                                                 onClick={() => {
                                                     navigate(`/details/${item.slug}`, 
                                                         { state: { 
-                                                            item: {...item, images: item.images.map((image) => `${fetchlink}/uploads/${image.name}`), 
+                                                            item: {...item, 
                                                                 seller: item.seller.username
                                                             }
                                                         } }
@@ -56,17 +56,11 @@ export default function Home() {
                                                 key={index}>
                                                 <div className="grid-image">
                                                     <div className="grid-image-inner-wrapper">
-                                                        <img src={item.link ? `https://${item.link}` :
-                                                            `${fetchlink}/uploads/${item.images[0].name}`} alt='itemimg'
+                                                        <img src={item.images[0]} alt='itemimg'
                                                             style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}
                                                         />
                                                     </div>
                                                 </div>
-                                                {/* <div className="portfolio-overlay"></div>
-                                                <div className="portfolio-text">
-                                                    <h3 className="portfolio-name">{item.name}</h3>
-                                                    <h3 className="portfolio-price">${item.price}</h3>
-                                                </div> */}
                                             </a>
                                         )
                                     })}
@@ -80,14 +74,13 @@ export default function Home() {
                             data-controllers-bound="GridImages"
                         >
                             {items.map((item, index) => {
-                                // console.log("item", item)
+                                console.log("item", item)
                                 return (
                                     <a className="grid-item"
                                         onClick={() => {
                                             navigate(`/details/${item.slug}`, 
                                                 { state: { 
-                                                    item: {...item, images: item.images.map((image) => `${fetchlink}/uploads/${image.name}`), 
-                                                        seller: item.seller.username
+                                                    item: {...item, seller: item.seller.username
                                                     }
                                                 } }
                                             )
@@ -95,8 +88,7 @@ export default function Home() {
                                         key={index}>
                                         <div className="grid-image">
                                             <div className="grid-image-inner-wrapper">
-                                                <img src={item.link ? `https://${item.link}` :
-                                                    `${fetchlink}/uploads/${item.images[0].name}`} alt='itemimg'
+                                                <img src={item.images[0]} alt='itemimg'
                                                     style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}}
                                                 />
                                             </div>

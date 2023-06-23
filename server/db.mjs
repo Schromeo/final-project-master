@@ -7,7 +7,6 @@ import path from 'path';
 import url from 'url';
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || "mongodb://127.0.0.1:27017/commerce";
 mongoose.connect(CONNECTION_STRING);
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 // create a User Schema
 const UserSchema = new mongoose.Schema({
@@ -31,12 +30,7 @@ const ItemSchema = new mongoose.Schema({
     description: {type: String, required: true},
     newused: {type: String, required: true},
     link: String,
-    images: [{
-        data: Buffer,
-        contentType: String,
-        // also need the name of the image so frontend can display it
-        name: String
-    }],
+    images: [String],
     // reference to the seller
     seller: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     wishlist_users: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],

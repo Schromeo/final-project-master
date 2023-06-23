@@ -1,60 +1,23 @@
 import './db.mjs';
 import mongoose from 'mongoose';
 import express from 'express';
-import multer from 'multer';
-import path from 'path'
-import { fileURLToPath } from 'url';
-import fetch from 'node-fetch';
-import * as fs from 'fs';
-import bodyParser from 'body-parser';
-import {v4 as uuidv4} from 'uuid';
 import cors from "cors";
 
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
-let itembody = {};
-
-// app.use(express.static(path.join(__dirname, 'build')))
 app.use(cors({
     credentials: true,
     origin: process.env.NODE_ENV === 'production' ? 'https://6493f148b713982fd7677885--schromeo-store.netlify.app' : 'http://localhost:3000'
 }))
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 });
-
-// make uploads folder accessible as static so the frontend can access it
-app.use('/uploads', express.static('uploads'));
-
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        console.log("body in destination is: ", req.body)
-        itembody = req.body;
-        cb(null, 'uploads/')
-    },
-    filename: function (req, file, cb) {
-        console.log("body in filename is: ", req.body)
-        const uniqueFilename = uuidv4(); // Generate a unique identifier
-        console.log("uf: ", uniqueFilename)
-        const fileExtension = file.originalname.split('.').pop(); // Get file extension (jpg/png)
-        const finalFilename = uniqueFilename + '.' + fileExtension; // Puts them together
-        
-        // add file name to itembody so it can be accessed in the post request
-        itembody.filename = finalFilename;
-        cb(null , finalFilename)
-    }
-})
-
-const upload = multer({ storage: storage });
-
-app.use(upload.array('images'));
 
 // if mongoose is connected, set
 const User = mongoose.model('User');
@@ -126,40 +89,24 @@ app.post('/updateprofile', async (req, res) => {
         });
 });
 
-app.post("/createitem", upload.single('images'), async (req, res, next) => {
-    console.log("itembody is: ", itembody)
-    console.log("req.files is: ", req.files)
-    let mongoimgarr = []
-    for (const file of req.files) {
-        console.log("file in loop is:", file)
-        const img = fs.readFileSync(file.path);
-        const encodeImage = img.toString('base64');
-        const finalImg = {
-            contentType: file.mimetype,
-            image: new Buffer.from(encodeImage, 'base64'),
-            // add name to image so frontend can display it
-            name: file.filename
-        };
-        mongoimgarr.push(finalImg)
-    }
-    
+app.post("/createitem", async (req, res) => {
     // find user with username
     try {
-        await User.findOne({ username: itembody.username }).then(async (user) => {
+        await User.findOne({ username: req.body.username }).then(async (user) => {
             if (user) {
                 // save item here
                 console.log("user is: ", user)
                 const item = new Item({
-                    name: itembody.name,
-                    price: Number(itembody.price),
-                    description: itembody.description,
-                    newused: itembody.newused,
-                    // images is an array of objects with data: Buffer, contentType: String
-                    images: mongoimgarr,
+                    name: req.body.name,
+                    price: Number(req.body.price),
+                    description: req.body.description,
+                    newused: req.body.newused,
+                    
                     // seller is a reference to the seller, so link to matching username
                     seller: user,
                 });
-                await item.save();
+                await item.save()
+
                 // if listed_items exists, push item to it, else create it
                 if (user.listed_items) {
                     user.listed_items.push(item);
@@ -167,7 +114,7 @@ app.post("/createitem", upload.single('images'), async (req, res, next) => {
                     user.listed_items = [item];
                 }
                 await user.save()
-                return res.status(200).json({ success: true });
+                return res.status(200).json({ success: true, item });
             }
         })
     } catch (err) {
@@ -391,6 +338,22 @@ app.get(`/wishlist`, async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' })
+    }
+})
+
+app.post('/addimages', async (req, res) => {
+    const { itemid, images } = req.body;
+    try {
+        await Item.findOne({ _id: itemid }).then(async (item) => {
+            if (item) {
+                item.images = images;
+                await item.save();
+            }
+        })
+        return res.status(200).json({ success: true })
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Item image adding failed' });
     }
 })
 

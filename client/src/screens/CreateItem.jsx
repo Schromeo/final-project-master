@@ -3,6 +3,8 @@ import Select from 'react-select'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { AuthContext, fetchlink } from '../App'
+import { storage } from '../firebase.js'
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 import '../assets/css/createitem.css'
 
 export default function CreateItem() {
@@ -55,64 +57,106 @@ export default function CreateItem() {
             <form className="globaldiv text1" id='createitemdiv' encType="multipart/form-data"
                 onSubmit={async (e) => {
                     e.preventDefault();
-                    console.log("e.target: ", e.target);
                     // if any of the fiels are empty, toast.error("Please fill out all fields"), if not, proceed
-                    if (e.target.name.value === '' || e.target.price.value === '' || e.target.description.value === '' ||
-                        finalfiles.length === 0 || e.target.newused.value === ''
-                    ) {
-                        console.log(`name: ${e.target.name.value}, price: ${e.target.price.value}, description: ${e.target.description.value},
-                            finalfiles: ${finalfiles.length}, newused: ${e.target.newused.value}`)
+                    if (name === '' || price === 0 || description === '' || finalfiles.length === 0 || newused.value === '') {
                         toast.error("Please fill out all fields!", {
                             position: "top-center",
                             colored: true,
                         });
-                        return;
                     } else {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open("POST", `${fetchlink}/createitem`);
-                        xhr.onload = function (event) {
-                        if (xhr.status === 200) {
-                            let response = JSON.parse(xhr.responseText);
-                            if (response.success) {
-                                toast.success("Item listed successfully!", {
+                        console.log(`name: ${name}, price: ${price}, description: ${description}, newused: ${newused.value}`)
+                        fetch(`${fetchlink}/createitem`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                name, price, description, newused: newused.value, username: user.username
+                            })
+                        })
+                            .then(res => res.json())
+                            .then(async (response) => {
+                                console.log("response: ", response)
+                                if (response.success) {
+                                    // upload all the images to images/item._id folder in firebase storage
+                                    await Promise.all(Array.from(finalfiles).map(async (file) => {
+                                        try {
+                                            await uploadBytes(ref(storage, `images/${response.item._id}/${file.name}`), file)
+                                            console.log('Uploaded:', file.name);
+                                        } catch(error) {
+                                            console.log('Error uploading:', error);
+                                            return;
+                                        }
+                                    }))
+
+                                    // get all the downloadURLs of the images
+                                    let images = [];
+                                    const imagefolder = ref(storage, `images/${response.item._id}`);
+                                    const imagesRef = await listAll(imagefolder);
+                                    await Promise.all(imagesRef.items.map(async (imageRef) => {
+                                        const downloadURL = await getDownloadURL(imageRef);
+                                        images.push(downloadURL);
+                                    }));
+                                    console.log("images: ", images)
+
+                                    // send downloadURLs to the backend
+                                    fetch(`${fetchlink}/addimages`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            images, itemid: response.item._id
+                                        })
+                                    })
+                                        .then(res2 => res2.json())
+                                        .then((response2) => {
+                                            if (response2.success) {
+                                                toast.success("Item listed successfully!", {
+                                                    position: "top-center",
+                                                    colored: true,
+                                                });
+                                                navigate("/listeditems");
+                                            } else {
+                                                toast.error("Error listing item!", {
+                                                    position: "top-center",
+                                                    colored: true,
+                                                });
+                                            }
+                                        })
+                                        .catch((err) => {
+                                            toast.error(`Error listing item: ${err}`, {
+                                                position: "top-center",
+                                                colored: true,
+                                            });
+                                        })
+                                } else {
+                                    toast.error("Error listing item!", {
+                                        position: "top-center",
+                                        colored: true,
+                                    });
+                                }
+                            })
+                            .catch((err) => {
+                                toast.error(`Error listing item: ${err}`, {
                                     position: "top-center",
                                     colored: true,
                                 });
-                                navigate("/listeditems");
-                            } else {
-                                toast.error("Error listing item!", {
-                                    position: "top-center",
-                                    colored: true,
-                                });
-                            }
-                        } else {
-                            toast.error(`HTTP request error: " + ${xhr.status}`, {
-                                position: "top-center",
-                                colored: true,
-                            });
-                        }
-                        };
-                        var formData = new FormData(e.target);
-                        // get username from formdata
-                        console.log(formData.get("username"));
-                        console.log("formData: ", formData);
-                        xhr.send(formData);
-                    }
+                            })
+                    };
                   }}
             >
                 <div className="labeldiv">
                     <label><h4 className='text1'>Product Name:</h4></label>   
-                    <input type="text" name='name' />
+                    <input type="text" name='name' onChange={e => setName(e.target.value)} />
                 </div>
                 <div className="labeldiv">
                     <label>Price</label>
-                    <input type="number" name='price' step='0.01' />
+                    <input type="number" name='price' step='0.01' onChange={e => setPrice(e.target.value)} />
                 </div>
                 <div className="labeldiv" id='newuseddiv'>
                     <label>New/Used</label>
                     <Select options={options} onChange={(val) => setNewused(val)} />
-                    {/* invisible input */}
-                    <input type="text" name='newused' value={newused.value} style={{display: 'none'}} />
                 </div>
                 <div className="labeldiv" id='createimagediv'>
                     <label>Image</label>
@@ -123,11 +167,9 @@ export default function CreateItem() {
                 <div className="labeldiv" id='descriptiondiv'>
                     <label>Description</label>
                     <textarea name='description' style={{border: '2px solid gray', borderRadius: '8px'}}
-                        // value={description} onChange={e => setDescription(e.target.value)}
+                        value={description} onChange={e => setDescription(e.target.value)}
                     />
                 </div>
-                {/* invisible input for passing username */}
-                <input type="text" name='username' value={user.username} style={{display: 'none'}} />
                 <input type="submit" className='btn btn-outline-success my-2 my-sm-0' value='List Item' />
             </form>
         </div>

@@ -32,13 +32,13 @@ export default function ItemDetails() {
                 <p>
                     <span style={{textDecoration: 'underline', textAlign: 'center', width: '100%', display: 'block'}}>Images</span>
                     <br />
-                    {item.link ? 
-                        <img src={`https://${item.link}`} alt='itemimg'
+                    {item.imageUrl ? 
+                        <img src={`https://${item.imageUrl}`} alt='itemimg'
                             style={{width: "100%", height: "100%", objectPosition: "50% 50%", objectFit: "cover"}} 
                         />
                     :
                         item.images.map((image, index) => (
-                            <img key={index} src={`http${item.brandName ? "s" : ''}://${image}`} alt={'item'} style={{width: '600px'}} />
+                            <img key={index} src={image} alt={'item'} style={{width: '600px'}} />
                         ))
                     }
                 </p>
