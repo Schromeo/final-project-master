@@ -92,7 +92,7 @@ app.post('/updateprofile', async (req, res) => {
 app.post("/createitem", async (req, res) => {
     // find user with username
     try {
-        await User.findOne({ username: req.body.username }).then(async (user) => {
+        await User.findOne({ username: req.body.userName }).then(async (user) => {
             if (user) {
                 // save item here
                 console.log("user is: ", user)

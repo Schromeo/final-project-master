@@ -8,10 +8,7 @@ export default function ViewProfile() {
     useEffect(() => {
         fetch(`${fetchlink}/getuser?username=${params.id}`)
             .then(res => res.json())
-            .then(data => {
-                console.log("data is: ", data)
-                setViewedUser(data)
-            })
+            .then(data => setViewedUser(data))
     }, [])
 
     const { user, setUser } = useContext(AuthContext);

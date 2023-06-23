@@ -12,7 +12,6 @@ export default function CreateItem() {
     const [price, setPrice] = useState(0)
     const [description, setDescription] = useState('')
     const [newused, setNewused] = useState('new')
-    const [image, setImage] = useState('')
     const [finalfiles, setFinalfiles] = useState([])
     const navigate = useNavigate()
     const { user } = useContext(AuthContext)
@@ -25,19 +24,10 @@ export default function CreateItem() {
     ]
 
     useEffect(() => {
-        console.log("image is: ", image)
-    }, [image])
-
-    useEffect(() => {
-        console.log("finalfiles: ", finalfiles)
-        
         // Clear existing images
         document.getElementById('imagesdiv').innerHTML = '';
 
-        const imagesarr = Array.from(finalfiles);
-        console.log("imagesarr: ", imagesarr)
-
-        imagesarr.forEach(async (image) => {
+        Array.from(finalfiles).forEach(async (image) => {
             const reader = new FileReader();
 
             reader.onload = async (e2) => {
@@ -64,27 +54,23 @@ export default function CreateItem() {
                             colored: true,
                         });
                     } else {
-                        console.log(`name: ${name}, price: ${price}, description: ${description}, newused: ${newused.value}`)
                         fetch(`${fetchlink}/createitem`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                name, price, description, newused: newused.value, username: user.username
+                                name, price, description, newused: newused.value, userName: user.username
                             })
                         })
                             .then(res => res.json())
                             .then(async (response) => {
-                                console.log("response: ", response)
                                 if (response.success) {
                                     // upload all the images to images/item._id folder in firebase storage
                                     await Promise.all(Array.from(finalfiles).map(async (file) => {
                                         try {
                                             await uploadBytes(ref(storage, `images/${response.item._id}/${file.name}`), file)
-                                            console.log('Uploaded:', file.name);
                                         } catch(error) {
-                                            console.log('Error uploading:', error);
                                             return;
                                         }
                                     }))
