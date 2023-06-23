@@ -2,9 +2,6 @@
 
 import mongoose from 'mongoose';
 import mongooseSlugPlugin from 'mongoose-slug-plugin';
-import fs from 'fs';
-import path from 'path';
-import url from 'url';
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || "mongodb://127.0.0.1:27017/commerce";
 mongoose.connect(CONNECTION_STRING);
 

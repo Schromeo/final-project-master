@@ -12,7 +12,6 @@ export default function Home() {
         fetch(`${fetchlink}/getallitems`)
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 // reverse data
                 setItems(data.reverse());
                 if (user && user.role === 'Buyer') {

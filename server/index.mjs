@@ -7,7 +7,7 @@ const app = express();
 
 app.use(cors({
     credentials: true,
-    origin: process.env.NODE_ENV === 'production' ? 'https://6493f148b713982fd7677885--schromeo-store.netlify.app' : 'http://localhost:3000'
+    origin: '*'
 }))
 
 app.use(express.urlencoded({ extended: true }))
