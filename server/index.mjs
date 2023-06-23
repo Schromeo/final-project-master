@@ -140,15 +140,14 @@ app.get("/listeditems", async (req, res) => {
 })
 
 app.post("/addtoseller", async (req, res) => {
-    const { name, price, description, newused, link, username } = req.body;
+    const { name, price, description, newused, images, username } = req.body;
     try {
         await User.findOne({ username: "MainSeller" }).then(async (user) => {
             if (user) {
                 // save item here
                 console.log("user is: ", user)
-                console.log("link is: ", link)
                 const item = new Item({
-                    name, price, description, newused, link,
+                    name, price, description, newused, images,
                     // seller is a reference to the seller, so link to matching username
                     seller: user,
                 });

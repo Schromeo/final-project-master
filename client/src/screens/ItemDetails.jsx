@@ -64,7 +64,7 @@ export default function ItemDetails() {
                                             price: item.price.substring(1),
                                             newused: item.newused,
                                             description: item.description,
-                                            link: item.imageUrl
+                                            images: [item.imageUrl],
                                         })
                                     })
                                     .then(res => res.json())

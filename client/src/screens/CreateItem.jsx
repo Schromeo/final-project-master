@@ -13,6 +13,7 @@ export default function CreateItem() {
     const [description, setDescription] = useState('')
     const [newused, setNewused] = useState('new')
     const [finalfiles, setFinalfiles] = useState([])
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate()
     const { user } = useContext(AuthContext)
 
@@ -47,6 +48,7 @@ export default function CreateItem() {
             <form className="globaldiv text1" id='createitemdiv' encType="multipart/form-data"
                 onSubmit={async (e) => {
                     e.preventDefault();
+                    setLoading(true);
                     // if any of the fiels are empty, toast.error("Please fill out all fields"), if not, proceed
                     if (name === '' || price === 0 || description === '' || finalfiles.length === 0 || newused.value === '') {
                         toast.error("Please fill out all fields!", {
@@ -102,6 +104,7 @@ export default function CreateItem() {
                                                     position: "top-center",
                                                     colored: true,
                                                 });
+                                                setLoading(false);
                                                 navigate("/listeditems");
                                             } else {
                                                 toast.error("Error listing item!", {
@@ -156,7 +159,7 @@ export default function CreateItem() {
                         value={description} onChange={e => setDescription(e.target.value)}
                     />
                 </div>
-                <input type="submit" className='btn btn-outline-success my-2 my-sm-0' value='List Item' />
+                <input type="submit" className='btn btn-outline-success my-2 my-sm-0' value={loading ? 'Loading...' : 'List Item'} />
             </form>
         </div>
     )
