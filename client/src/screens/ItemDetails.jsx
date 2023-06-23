@@ -24,10 +24,10 @@ export default function ItemDetails() {
                 </Link>
                 <p>Price: ${item.price.toLocaleString()}</p>
                 {item.newused && <p>New/Used: {item.newused}</p>}
-                <p style={{maxWidth: '55vw'}}>
+                <p style={{maxWidth: '55vw', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <span style={{textDecoration: 'underline', display: 'block', textAlign: 'center'}}>Description</span>
                     <br />
-                    {item.description}
+                    <span style={{textAlign: 'center'}}>{item.description}</span>
                 </p>
                 <p>
                     <span style={{textDecoration: 'underline', textAlign: 'center', width: '100%', display: 'block'}}>Images</span>
@@ -64,7 +64,7 @@ export default function ItemDetails() {
                                             price: item.price.substring(1),
                                             newused: item.newused,
                                             description: item.description,
-                                            images: [item.imageUrl],
+                                            images: [`https://${item.imageUrl}`],
                                         })
                                     })
                                     .then(res => res.json())
