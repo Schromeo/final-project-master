@@ -72,6 +72,24 @@ All the item uploaded by this seller has been stored in Selling List.
 
 ![SellingList](screenshots/SellerListedItem.png)
 
+## Profile Page
+
+### Public Profile Page
+
+By typing in /profile/username, anyone can visit the public profile of each user. 
+A seller's public profile also shows the item sold by this seller.
+
+![PublicProfile](screenshots/PublicProfile.png)
+
+### Private Profile Page
+
+Both seller and buyer can change their Username and Password on their profile page.
+
+A buyer can also edit his/ her/ their address and interests.
+
+![BuyerProfile](screenshots/BuyerProfile.png)
+
+
 
 
 
