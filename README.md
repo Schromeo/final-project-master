@@ -10,3 +10,7 @@ Yisong Cheng [@schromeo](https://github.com/Schromeo/)
 ## Website Description
 
 This is an online store website using ASOS as an external API.  
+
+## Guest Homepage
+An anonymous user can view and search the contents without login. 
+![GuestHome](screenshots/GuestHome.png)
