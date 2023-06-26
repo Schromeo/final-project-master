@@ -3,7 +3,7 @@ This is the final project for CS5610. A web app based on React.
 Author: Yisong Cheng
 
 ## UML Structure
-![UML](UML.png)
+![UML](screenshots/UML.png)
 
 ## Website Description
 
