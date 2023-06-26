@@ -90,6 +90,10 @@ A buyer can also edit his/ her/ their address and interests.
 ![BuyerProfile](screenshots/BuyerProfile.png)
 
 
+## Details Page
+
+This page shows the detail of the item. Also, any user can visit the seller's profile by clicking the link.
+![ItemDetails](screenshots/ItemDetails.png)
 
 
 
