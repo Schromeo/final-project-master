@@ -50,6 +50,32 @@ A buyer's homepage displays the wishlist at the homepage.
 
 ![BuyerHomepage](screenshots/BuyerHome.png)
 
+Also, a buyer can add any item to the shopping cart or wishlist.
+
+![ShoppingCart](screenshots/ShoppingCart.png)
+
+### Seller Homepage
+
+A seller's homepage has the selling list of the item uploaded.
+
+![SellerHome](screenshots/SellerHome.png)
+
+A seller can upload an item by entering {product name, price, new/used, images, description}
+
+![CreateItem](screenshots/CreateItem.png)
+
+Also, the seller can change/update the item detail anytime.
+
+![EditItem](screenshots/EditItem.png)
+
+All the item uploaded by this seller has been stored in Selling List.
+
+![SellingList](screenshots/SellerListedItem.png)
+
+
+
+
+
 
 
 
