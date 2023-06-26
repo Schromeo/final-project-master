@@ -26,7 +26,7 @@ The information needed for signing up are Username, Email, and Password.
 
 Here's an example of signing up as a seller.
 
-![SignupSeller](screenshots/SignUpSeller) 
+![SignUpSeller](screenshots/SignUpSeller.png) 
 
 ## Login Page
 
