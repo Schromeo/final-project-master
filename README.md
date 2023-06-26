@@ -9,6 +9,8 @@ Yisong Cheng [@schromeo](https://github.com/Schromeo/)
 
 ## Website Description
 
+This web app is published on Netlify: https://schromeo-store.netlify.app/
+
 This is an online store website using ASOS as an external API.  
 
 ## Guest Homepage
@@ -93,6 +95,7 @@ A buyer can also edit his/ her/ their address and interests.
 ## Details Page
 
 This page shows the detail of the item. Also, any user can visit the seller's profile by clicking the link.
+
 ![ItemDetails](screenshots/ItemDetails.png)
 
 
